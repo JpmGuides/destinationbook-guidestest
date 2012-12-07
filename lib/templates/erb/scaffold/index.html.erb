@@ -1,0 +1,9 @@
+<%%= title "<%= plural_name.capitalize %>" %>
+
+<%%= table collection do |t, resource|
+<%- attributes.each do |attribute| -%>
+  t.column "<%= attribute.name.humanize %>", resource.<%= attribute.name %>
+<%- end -%>
+end %>
+
+<%%= sidebar { link_to_new } %>
