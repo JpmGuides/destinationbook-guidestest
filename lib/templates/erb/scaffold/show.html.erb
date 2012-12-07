@@ -1,0 +1,9 @@
+<%%= title resource.name %>
+
+<%%= table do |t|
+  <%- attributes.each do |attribute| -%>
+  t.row "<%= attribute.name.capitalize %>", resource.<%= attribute.name %>
+  <%- end -%>
+end %>
+
+<%%= sidebar { link_to_edit } %>

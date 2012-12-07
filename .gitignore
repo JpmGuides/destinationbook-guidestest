@@ -1,0 +1,13 @@
+/.bundle
+/db/*.sqlite3
+/log/*
+/tmp
+/public/uploads
+/public/assets
+/public/export
+/db/backups
+.DS_Store
+.env
+config/settings.local.yml
+config/settings/*.local.yml
+config/environments/*.local.yml
