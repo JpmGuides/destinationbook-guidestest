@@ -34,15 +34,15 @@ class ExportGuides
         @data = process(options[:width], options[:height])
       end
 
-      file = ExportGuides.aws_bucket_directory.files.create(
-        :key              => options[:key] || "#{ENV['GUIDE_PATH']}/#{@guide_id}/#{options[:type]}/#{@name}.#{options[:extension]}",
-        :body             => ActiveSupport::Gzip.compress(@data),
-        :content_type     => "image/#{options[:type]}",
-        :content_encoding => 'gzip',
-        :public           => options[:pub]
-      )
+      path = "#{Settings.path.guides_generated}/#{guide_id}/#{options[:type]}"
 
-      file.public_url
+      FileUtils.mkdir_p(path) if !File.exists?(path)
+
+      local_file = File.open("#{path}/#{@name}.#{options[:extension]}", 'wb+')
+      local_file.write(data)
+      local_file.close
+  
+      "guides/#{guide_id}/#{options[:type]}/#{@name}.#{options[:extension]}"
     end
 
   end
