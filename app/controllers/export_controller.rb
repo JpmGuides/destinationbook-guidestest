@@ -1,9 +1,8 @@
 class ExportController < ApplicationController
 
   def show
-    id = params[:id].gsub('-', '.')
 
-    json_path = "#{Settings.path.guides_generated}/#{id}/guide.json"
+    json_path = "#{Settings.path.guides_generated}/#{params[:guide_id]}/guide.json"
 
     json_path = File.exists?(json_path) ? json_path : nil
 
