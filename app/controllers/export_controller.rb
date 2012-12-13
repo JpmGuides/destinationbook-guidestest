@@ -11,6 +11,8 @@ class ExportController < ApplicationController
     else
       render file: json_path, content_type: 'application/json'
     end
+
+    expires_now
   end
 
 end
