@@ -9,7 +9,7 @@ class ExportController < ApplicationController
     if json_path.nil?
       render nothing: true, status: 404
     else
-      render file: json_path, content_type: 'application/json'
+      render file: json_path, :formats => [:json]
     end
 
     expires_now
