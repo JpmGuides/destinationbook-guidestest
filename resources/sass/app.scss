@@ -1,0 +1,92 @@
+
+//
+// import css from original app
+//
+
+@import 'original';
+
+//
+// Sync
+//
+
+#synccard {
+  > .x-inner {
+    background: #ffffff;
+    padding: 1em;
+  }
+
+  .x-panel.logs {
+    font-size: 0.9em;
+    text-align: center;
+    margin: 20px 8px 10px 8px;
+    font-family: $second-font-family;
+  }
+
+  .x-field-input .x-clear-icon {
+    background-image: inline-image('clear-icon.png');
+  }
+
+  .x-field-text {
+    margin: 0;
+
+    .x-component-outer {
+      border: 1px solid #d9d9d9;
+    }
+
+    &.host {
+      .x-component-outer {
+        @include border-top-radius(0.4em);
+      }
+    }
+
+    &.identifier {
+      .x-component-outer {
+        border-top: none;
+        @include border-bottom-radius(0.4em);
+      }
+    }
+  }
+
+  .x-button {
+    background-color: #ffffff;
+    background-image: none;
+    margin: 10px 0 0 0;
+    border-width: 1px;
+    border-color: #d9d9d9;
+
+    .x-button-label {
+      color: #666666;
+      line-height: 1.6em;
+    }
+
+    &.x-button-pressing {
+      background-color: #d9d9d9;
+    }
+  }
+
+  .progress-bar {
+    position: relative;
+    overflow: hidden;
+
+    &.x-button-pressing {
+      background-color: #ffffff;
+    }
+
+    .progress {
+      z-index: 1;
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      bottom: -1px;
+      width: 0%;
+      background-color: #d9d9d9;
+      @include border-radius(0.4em);
+    }
+
+    .message {
+      position: relative;
+      z-index: 1;
+    }
+  }
+}
+

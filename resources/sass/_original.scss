@@ -1,0 +1,654 @@
+@import 'sencha-touch/default/all';
+
+// You may remove any of the following modules that you
+// do not use in order to create a smaller css file.
+@include sencha-panel;
+@include sencha-buttons;
+@include sencha-sheet;
+@include sencha-picker;
+@include sencha-tabs;
+@include sencha-toolbar;
+@include sencha-toolbar-forms;
+@include sencha-indexbar;
+@include sencha-list;
+@include sencha-layout;
+@include sencha-carousel;
+@include sencha-form;
+@include sencha-msgbox;
+
+// Your custom code goes here...
+@import 'compass/typography/links/unstyled-link';
+
+// loader
+@include sencha-loading-spinner;
+
+// fomts
+$main-font-family: Georgia;
+$second-font-family: "Helvetica Neue", HelveticaNeue, "Helvetica-Neue", Helvetica, sans-serif;
+
+// colors
+$home-panel-background-color: #ffffff;
+
+// custom list
+$custom-list-disclosure-size: 1em;
+$custom-list-height: 3.8em;
+$custom-list-header-item-bg-color: #e8e8e8;
+$custom-list-header-item-gradient: $base-gradient;
+
+@import 'custom_list';
+
+// icons
+.x-button-icon {
+  &.home {
+    -webkit-mask: 0 0 inline-image('home-icon.png') no-repeat;
+  }
+
+  &.list {
+    -webkit-mask: 0 0 inline-image('list-icon.png') no-repeat;
+  }
+
+  &.schedule {
+    -webkit-mask: 0 0 inline-image('schedule-icon.png') no-repeat;
+  }
+
+  &.documents {
+    -webkit-mask: 0 0 inline-image('documents-icon.png') no-repeat;
+  }
+
+  &.contacts {
+    -webkit-mask: 0 0 inline-image('contacts-icon.png') no-repeat;
+  }
+
+  &.guides {
+    -webkit-mask: 0 0 inline-image('guides-icon.png') no-repeat;
+  }
+
+  &.settings {
+    -webkit-mask: 0 0 inline-image('settings-icon.png') no-repeat;
+  }
+
+  &.maps {
+    -webkit-mask: 0 0 inline-image('maps-icon.png') no-repeat;
+  }
+}
+
+// image loader
+.image-loader {
+  background-image: inline-image('ajax-loader.gif');
+  background-position: center center;
+  background-repeat: no-repeat;
+
+  img {
+    display: none;
+  }
+}
+
+// top toolbar
+.x-toolbar.x-docked-top {
+  border-bottom: none;
+}
+
+// message box
+.x-msgbox {
+  border-color: #d9d9d9 !important;
+  background-color: #ffffff !important;
+
+  .x-title {
+    color: #03111a !important;
+    text-shadow: none;
+  }
+
+  .x-msgbox-text {
+    color: #666666 !important;
+    text-shadow: none;
+  }
+
+  .x-button {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    border-width: 2px !important;
+    border-color: #d9d9d9 !important;
+
+    .x-button-label {
+      color: #666666 !important;
+      opacity: 1.0;
+    }
+
+    &.x-button-pressing {
+      background-color: #d9d9d9 !important;
+      background-image: none !important;
+    }
+  }
+}
+
+// splash screen
+#splashscreen {
+  background-color: #ffffff;
+}
+
+// bottom toolbar
+.x-panel.card-toolbar {
+  $color: darken($base-color, 10%);
+
+  @include background-gradient($color, $toolbar-gradient);
+
+  border-top: darken($color, 7%);
+  border-top-style: solid;
+  border-top-width: 1px;
+
+  .x-inner {
+
+    .card-toolbar-button {
+      @include display-box;
+      @include box-orient(vertical);
+      @include box-align(center);
+      @include box-pack(center);
+      @include box-flex(1);
+
+      cursor: pointer;
+      color: $home-panel-background-color;
+
+      padding: 0.2em 0;
+      min-width: 80px;
+
+      .x-button-icon {
+        display: block;
+        @include box-flex(0);
+        height: 32px;
+        width: 32px;
+        background-color: $home-panel-background-color;
+        -webkit-mask-size: 32px;
+      }
+
+      .x-button-label {
+        @include box-flex(0);
+
+        font-family: $second-font-family;
+        font-size: 0.6em;
+        margin: 0;
+        padding: 0.3em 0 0 0;
+      }
+    }
+  }
+}
+
+//
+// Sync
+//
+
+#synccard {
+  > .x-inner {
+    background: #ffffff;
+    padding: 1em;
+  }
+
+  .x-panel.logo {
+    margin: 0.6em auto;
+
+    img {
+      display: block;
+      margin: 0 auto;
+      width: 65%;
+    }
+  }
+
+  .x-panel.help {
+    font-size: 0.9em;
+    text-align: center;
+    margin: 20px 8px 10px 8px;
+    font-family: $second-font-family;
+  }
+
+  .x-field-input .x-clear-icon {
+    background-image: inline-image('clear-icon.png');
+  }
+
+  .x-field-text {
+    margin: 0;
+
+    .x-component-outer {
+      border: 1px solid #d9d9d9;
+    }
+
+    &.username {
+      .x-component-outer {
+        @include border-top-radius(0.4em);
+      }
+    }
+
+    &.token {
+      .x-component-outer {
+        border-top: none;
+        @include border-bottom-radius(0.4em);
+      }
+    }
+  }
+
+  .x-button {
+    background-color: #ffffff;
+    background-image: none;
+    margin: 10px 0 0 0;
+    border-width: 1px;
+    border-color: #d9d9d9;
+
+    .x-button-label {
+      color: #666666;
+      line-height: 1.6em;
+    }
+
+    &.x-button-pressing {
+      background-color: #d9d9d9;
+    }
+  }
+
+  .progress-bar {
+    position: relative;
+    overflow: hidden;
+
+    &.x-button-pressing {
+      background-color: #ffffff;
+    }
+
+    .progress {
+      z-index: 1;
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      bottom: -1px;
+      width: 0%;
+      background-color: #d9d9d9;
+      @include border-radius(0.4em);
+    }
+
+    .message {
+      position: relative;
+      z-index: 1;
+    }
+  }
+}
+
+//
+// Home
+//
+.home-container {
+  background-color: lighten(rgb(0, 0, 0), 25%);
+  padding: 1.5em 2.0em 3.0em 2.0em;
+
+  > .x-inner {
+    background-color: #000000;
+    -webkit-box-shadow: 4px 4px 5px #000000;
+  }
+
+  .home-panel {
+    background-color: $home-panel-background-color;
+    padding-top: 1em;
+
+    .logo {
+      display: block;
+      width: 80%;
+      height: 3em;
+      margin: 0 auto;
+    }
+
+    h1 {
+      padding: 1em 1em;
+      font-size: 0.9em;
+      font-family: $second-font-family;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .home-button-stack {
+      border-top: 1px solid $home-panel-background-color;
+
+      .home-button {
+        @include display-box;
+        @include box-orient(vertical);
+        @include box-align(center);
+        @include box-pack(center);
+
+        cursor: pointer;
+        background-color: #1985D0;
+        color: $home-panel-background-color;
+
+        .x-button-icon {
+          display: block;
+          @include box-flex(0);
+          height: 32px;
+          width: 32px;
+          background-color: $home-panel-background-color;
+          -webkit-mask-size: 32px;
+        }
+
+        .x-button-label {
+          @include box-flex(0);
+
+          text-transform: uppercase;
+          font-family: $second-font-family;
+          font-size: 0.6em;
+          margin: 0;
+          padding: 0.5em 0 0 0;
+        }
+
+        &:first-child {
+          border-right: 1px solid $home-panel-background-color;
+        }
+
+        &:last-child {
+          border-right: none;
+        }
+      }
+    }
+  }
+}
+
+//
+// Schedule
+//
+.schedule-event {
+  .x-list-header {
+    text-transform: uppercase;
+
+    .date {
+      float: right;
+    }
+  }
+
+  .custom-list-item-label-text {
+
+    &.schedule-day-label {
+      @include background-gradient($custom-list-header-item-bg-color, $custom-list-header-item-gradient);
+      @include color-by-background($custom-list-header-item-bg-color, 95%);
+      padding-bottom: 1em !important;
+
+      .title {
+        color: #000000;
+        text-transform: uppercase;
+      }
+    }
+
+    &.schedule-event-label {
+      .time {
+        font-size: 0.80em;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: lighten($list-color, 35%);
+      }
+    }
+  }
+
+  .x-list-inner {
+    .x-innerhtml {
+      text-align: center;
+      padding: 2em 2em;
+    }
+  }
+}
+
+//
+// Documents
+//
+.documents-list {
+  .custom-list-item-label-image {
+    @include box-align(start);
+
+    img {
+      height: $custom-list-height - 1em;
+      margin-left: 0.6em;
+    }
+  }
+}
+
+.documents-detail {
+  background-color: #ffffff;
+
+  img {
+    width: 100%;
+  }
+}
+
+//
+// Contacts
+//
+.contacts-list {
+  .x-list-header {
+    text-transform: uppercase;
+    font-family: $second-font-family;
+  }
+
+  .x-list-disclosure {
+    position: absolute;
+    bottom: 24px;
+  }
+}
+
+.contacts-detail {
+  .x-list-header {
+    display: none;
+  }
+
+  .x-list-item:first-child {
+    .x-list-header {
+      display: block;
+      color: #000000;
+    }
+
+    .x-list-item-label {
+      display: none;
+    }
+  }
+
+  .x-list-item-label {
+    @include display-box;
+    @include box-orient(horizontal);
+    @include box-align(stretch);
+    @include box-pack(start);
+    @include box-direction(normal);
+    width: 100%;
+
+    .contact-detail-label {
+      @include box-flex(0);
+      @include display-box;
+      @include box-orient(horizontal);
+      @include box-align(start);
+      @include box-pack(end);
+      text-align: right;
+      width: 100px;
+      padding-right: 15px;
+      font-size: 0.8em;
+      font-weight: bold;
+      @include color-by-background(#ffffff, 40%);
+    }
+
+    .contact-detail-value {
+      @include box-flex(4);
+      @include display-box;
+      @include box-orient(horizontal);
+      @include box-align(start);
+      @include box-pack(start);
+      display: block;
+      font-size: 0.8em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .contact-detail-link {
+      display: none;
+    }
+  }
+}
+
+//
+// Guides
+//
+.guides-list, .guides-container, .guides-part, .guides-maps {
+  background-color: $list-bg-color;
+
+  font-size: 0.9em;
+  font-family: $second-font-family;
+}
+
+.guides-part {
+  // Direction in reversed apparently...
+  sup {
+    vertical-align: text-bottom;
+  }
+  sub {
+    vertical-align: text-top;
+  }
+
+  .guides-header-image, .guides-content-image {
+    position: relative;
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .legend {
+      @include display-box;
+      @include box-orient(horizontal);
+      @include box-align(center);
+      @include box-pack(start);
+      width: 100%;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      padding: 0.75em 1.9em;
+      color: $list-bg-color;
+      font-size: 0.64em;
+      font-family: $second-font-family;
+      background-color: rgba(0, 0, 0, 0.5);
+      line-height: 1.2em;
+      font-style: italic;
+    }
+  }
+
+  .guides-part-header {
+    background-color: $list-bg-color;
+    font-family: $second-font-family;
+
+    .guides-breadcrumbs {
+      @include display-box;
+      padding: 1.2em 1.9em 0em 1.9em;
+      color: lighten($list-color, 40%);
+      font-size: 0.64em;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    h2 {
+      @include display-box;
+      padding: 0em 0.8em;
+      font-weight: bold;
+      font-size: 1.45em;
+
+      &:first-child {
+        padding-top: 0.4em;
+      }
+    }
+  }
+
+  .guides-part-content {
+    .x-innerhtml {
+      background-color: $list-bg-color;
+      font-family: $main-font-family;
+      display: block;
+
+      h1, h2, h3, h4, h5, h6, h7, h8, h9, h10 {
+        font-size: 1.2em;
+        font-weight: bold;
+        padding: 0.6em 0.5em 1em 0.5em;
+      }
+
+      p {
+        display: inline-block;
+        font-size: 1em;
+        padding: 0 1.2em 0.6em 1.2em;
+        line-height: 1.4em;
+
+        strong {
+          font-family: $second-font-family;
+          font-weight: bold;
+          font-size: 0.9em;
+        }
+
+        em {
+          font-style: italic;
+        }
+
+        a {
+          @include unstyled-link;
+        }
+      }
+
+      img {
+        padding-top: 0.6em;
+      }
+
+      aside {
+        border-top: 3px solid lighten($list-color, 40%);
+        border-bottom: 3px solid lighten($list-color, 40%);
+
+        p {
+          font-family: $second-font-family;
+          font-size: 0.8em;
+          line-height: 1.4em;
+
+          strong {
+            font-size: 1em;
+          }
+        }
+      }
+    }
+  }
+}
+
+.guides-part-header.guides-header-image .guides-header-image,
+.guides-part-header.guides-header-image + .guides-part-content .x-innerhtml {
+  padding-top: 0.77em;
+}
+.guides-part-header:not(.guides-header-image) .x-innerhtml {
+  padding-bottom: 0.77em;
+}
+.guides-part-content:not(.x-item-hidden) + .guides-part-children-list {
+  margin-top: 0.6em;
+}
+
+.guides-part-content + .guides-part-children-list {
+  border-top: 1px solid #dedede;
+}
+
+.guides-part-children-list, .guides-maps {
+  .custom-list-item-label-image {
+    img {
+      height: $custom-list-height - 0.4em;
+      margin-right: 0.2em;
+    }
+  }
+
+  .custom-list-item-label-text {
+    span {
+      &.title {
+        font-size: 1.19em !important;
+      }
+
+      &.description {
+        font-size: 0.70em !important;
+        font-family: $second-font-family !important;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: lighten($list-color, 35%);
+      }
+    }
+  }
+}
+
+.guides-map {
+  background-color: #ffffff;
+
+  img {
+    width: 100%;
+  }
+}

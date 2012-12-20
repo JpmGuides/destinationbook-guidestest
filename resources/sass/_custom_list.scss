@@ -1,0 +1,107 @@
+.x-list {
+  .x-list-disclosure {
+    -webkit-mask: none;
+    background: center center inline-image('disclosure.png') no-repeat;
+    background-size: $custom-list-disclosure-size $custom-list-disclosure-size;
+    width: $custom-list-disclosure-size;
+    height: $custom-list-disclosure-size;
+    bottom: ($global-row-height - $custom-list-disclosure-size) / 2;
+  }
+}
+
+.x-list.x-list-normal {
+  .x-list-header {
+    @include background-gradient(darken($custom-list-header-item-bg-color, 10%), $custom-list-header-item-gradient);
+    color: #ffffff;
+    border-color: darken($custom-list-header-item-bg-color, 7%);
+  }
+
+  .x-list-item {
+    height: auto;
+
+    &.thumbnail {
+      min-height: $custom-list-height;
+
+      .x-list-item-label {
+        min-height: $custom-list-height;
+      }
+    }
+
+    &:first-child {
+      border-bottom-width: 0px;
+    }
+
+    .x-list-item-header {
+      font-size: 1.07em;
+    }
+
+    .x-list-item-label {
+      position: relative;
+      overflow: hidden;
+      height: auto;
+      padding: 0;
+
+      @include display-box;
+      @include box-orient(horizontal);
+      @include box-align(stretch);
+      @include box-pack(start);
+      @include box-direction(normal);
+
+      .custom-list-item-label-image {
+        @include display-box;
+        @include box-orient(horizontal);
+        @include box-pack(center);
+        @include box-align(center);
+
+        img {
+          display: block;
+        }
+      }
+
+      .custom-list-item-label-text {
+        @extend .x-list-item-label;
+
+        @include display-box;
+        @include box-orient(vertical);
+        @include box-align(start);
+        @include box-pack(center);
+        @include box-direction(normal);
+        @include box-flex(2);
+
+        border-width: 0px;
+        &:last-child {
+          border-bottom-width: 0px;
+        }
+        padding: 0.4em 2.4em 0.4em 1.2em;
+
+        span {
+          display: block;
+          padding: 0;
+
+          &.title {
+            font-family: $second-font-family;
+            font-size: 0.95em;
+            font-weight: bold;
+          }
+
+          &.description {
+            font-family: $main-font-family;
+            font-size: 0.80em;
+          }
+        }
+      }
+    }
+
+    .x-list-disclosure {
+      position: absolute;
+      bottom: 50%;
+      margin-bottom: $custom-list-disclosure-size / -2;
+    }
+
+    &.x-list-header-item {
+      .x-list-disclosure {
+        margin-bottom: ($custom-list-disclosure-size / -2) - 0.8em;
+      }
+    }
+  }
+}
