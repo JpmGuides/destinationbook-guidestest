@@ -13,7 +13,8 @@ namespace :listner do
         begin
 
           guide_id = File.basename(change, '.*')
-          guide = ExportGuides::Guide.new(guide_id, change, Zip::ZipFile.open(change)) 
+          guide = ExportGuides::Guide.new(guide_id, change, Zip::ZipFile.open(change))
+          FileUtils.rm_rf("#{Rails.root}/public/guides/#{guide_id}")
           guide.generate
 
           puts "guide #{guide_id} was generated successfully"
