@@ -4,7 +4,8 @@
 /tmp
 /public/uploads
 /public/assets
-/public/export
+/public/zip/*
+/public/guides/*
 /db/backups
 .DS_Store
 .env

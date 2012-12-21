@@ -1,0 +1,3 @@
+path:
+  guides_zip: <%= Rails.root %>/public/zip
+  guides_generated: <%= Rails.root %>/public/guides

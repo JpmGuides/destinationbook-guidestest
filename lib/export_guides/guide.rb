@@ -3,14 +3,17 @@ require 'nokogiri'
 
 class ExportGuides
   class Guide
-    attr_accessor :id, :s3_path, :zip_data, :generation, :nb_files
+
+    attr_accessor :id, :path, :zip_data, :generation, :nb_files
+
     TITLES_XPATH = './h1|./h2|./h3|./h4|./h5|./h6|./h7|./h8|./h9|./h10'
     MAX_IMAGE_SIZE = {:width => 640, :height => nil}
     MAX_THUMBNAIL_SIZE = {:width => 100, :height => 100}
 
-    def initialize(id, s3_path, zip_data = nil)
+
+    def initialize(id, path, zip_data = nil)
       @id = id
-      @s3_path = s3_path
+      @path = path
       @zip_data = zip_data
       @nb_files = 1
     end
@@ -202,16 +205,15 @@ class ExportGuides
     end
 
     def save
+      path = "#{Settings.path.guides_generated}/#{id}"
 
-      file = ExportGuides.aws_bucket_directory.files.create(
-        'key'                => "#{ENV['GUIDE_PATH']}/#{@id}/guide.json",
-        'body'               => ActiveSupport::Gzip.compress("Ext.data.JsonP.callback(#{@generation.to_json})"),
-        'content_type'       => 'application/javascript',
-        'content_encoding'   => 'gzip',
-        'x-amz-meta-nb-file' => @nb_files
-      )
+      FileUtils.mkdir_p(path) if !File.exists?(path)
 
-      Rails.cache.write("last_modified_#{self.id}",  ExportGuides.aws_bucket_directory.files.head(self.s3_path).last_modified.to_datetime.to_i)
+      local_file = File.open("#{path}/guide.json", 'wb+')
+      local_file.write(@generation)
+      local_file.close
+
+      Rails.cache.write("last_modified_#{self.id}",  File.mtime(path))
       Rails.cache.delete("on_error_#{self.id}")
       true
     end

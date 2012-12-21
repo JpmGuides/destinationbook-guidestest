@@ -6,3 +6,5 @@ gem 'sqlite3'
 gem 'zip'
 gem 'nokogiri'
 gem 'rmagick', :require => 'RMagick'
+gem 'listen'
+
