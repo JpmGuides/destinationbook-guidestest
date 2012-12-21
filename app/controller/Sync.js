@@ -5,6 +5,7 @@ Ext.define('app.controller.Sync', {
     refs: {
       main: 'mainpanel',
       syncCard: 'synccard',
+      logsPanel: 'synccard #logsPanel',
       progressBar: '#syncProgressBar'
     },
 
@@ -23,6 +24,8 @@ Ext.define('app.controller.Sync', {
 
   connectionStates: {},
 
+  refreshLogsDelay: 10000,
+
   launch: function() {
     this.getSyncCard().setValues(app.guideSync.data);
 
@@ -39,7 +42,7 @@ Ext.define('app.controller.Sync', {
           item.setText(I18n.t('sync.button.sync', { locale: I18n.phoneLocale }));
           break;
         case 'guide':
-          item.setText(I18n.t('sync.button.guide', { locale: I18n.phoneLocale }));
+          item.setText(I18n.t('sync.button.guide', { locale: I18n.phoneLocale, guide_id: '' }));
           break;
       }
     });
@@ -56,12 +59,58 @@ Ext.define('app.controller.Sync', {
 
     this.resetView();
 
+    this.refreshLogs();
+
     this.on('file_downloaded', this._incrementDownloadProgressBar, this);
     app.app.on('go_home', this.showSyncPanel, this);
   },
 
   resetView: function() {
     this._hideDownloadProgressBar();
+  },
+
+  refreshLogs: function() {
+    var that = this;
+    this.refreshLogs = Ext.Function.createDelayed(this.refreshLogs, this.refreshLogsDelay, this);
+
+    if (Ext.isEmpty(app.guideSync) || Ext.isEmpty(app.guideSync.get('host'))) {
+      this.refreshLogs();
+      return;
+    }
+
+    Ext.Ajax.request({
+      url: 'http://' + app.guideSync.get('host') + '/status.json',
+      method: 'GET',
+      scope: this,
+      timeout: 30000,
+
+      // ignore failure
+      failure: function(response, request) {
+        console.log('Logs refresh failure: ' + response.status + ' - '+ response.statusText);
+
+        if (response.statusText === 'communication failure') {
+          that.getLogsPanel().setEmptyText(I18n.t('sync.errors.server_unavailable.message', { locale: I18n.phoneLocale }))
+        } else {
+          that.getLogsPanel().setEmptyText(I18n.t('sync.errors.logs_unavailable.message', { locale: I18n.phoneLocale }))
+        }
+
+        that.getLogsPanel().getStore().removeAll();
+        that.refreshLogs();
+      },
+
+      // sync guide
+      success: function(response) {
+        try {
+          that.getLogsPanel().getStore().setData(Ext.JSON.decode(response.responseText));
+        } catch(err) {
+          console.log('Logs refresh failure: ' + err.message);
+          that.getLogsPanel().setEmptyText(I18n.t('sync.errors.logs_unavailable.message', { locale: I18n.phoneLocale }))
+          that.getLogsPanel().getStore().removeAll();
+        }
+
+        that.refreshLogs();
+      }
+    });
   },
 
   showGuidesPanel: function(callback) {
@@ -190,7 +239,7 @@ Ext.define('app.controller.Sync', {
 
       // ignore failure
       failure: function(response, request) {
-        Ext.Msg.alert(I18n.t('sync.errors.no_guide.title', { locale: I18n.phoneLocale }), I18n.t('sync.errorsno_guide.message', { locale: I18n.phoneLocale }), Ext.emptyFn);
+        Ext.Msg.alert(I18n.t('sync.errors.no_guide.title', { locale: I18n.phoneLocale }), I18n.t('sync.errors.no_guide.message', { locale: I18n.phoneLocale }), Ext.emptyFn);
         this._hideDownloadProgressBar();
       },
 

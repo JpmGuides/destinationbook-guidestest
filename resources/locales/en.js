@@ -32,7 +32,7 @@ Ext.define('Locale.en', {
       },
       button: {
         sync: 'Download the guide',
-        guide: 'Show guide "{{guide_id}}"'
+        guide: 'Show guide {{guide_id}}'
       },
       progress: {
         start: 'Initializing…',
@@ -46,11 +46,19 @@ Ext.define('Locale.en', {
         },
         no_guide: {
           title: null,
-          message: 'Requested guide doesn\'t exist, please verifiy on server'
+          message: 'Requested guide doesn\'t exist.'
         },
         no_connection: {
           title: null,
-          message: 'Impossible to connect to the Internet.'
+          message: 'Impossible to connect to the Intranet.'
+        },
+        server_unavailable: {
+          title: null,
+          message: 'server is unvailable.'
+        },
+        logs_unavailable: {
+          title: null,
+          message: 'logs is unvailable.'
         }
       }
     },
@@ -64,6 +72,12 @@ Ext.define('Locale.en', {
       abbr_day_names: [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
       month_names: [ null, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       abbr_month_names: [ null, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    },
+
+    time: {
+      formats: {
+        'long': '%B %d, %Y %H:%M',
+      }
     }
 
   };

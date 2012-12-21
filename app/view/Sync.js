@@ -8,6 +8,8 @@ Ext.define('app.view.Sync', {
 
     layout: 'vbox',
 
+    fullscreen: true,
+
     scrollable: false,
 
     items: [
@@ -45,8 +47,54 @@ Ext.define('app.view.Sync', {
 
         hidden: true
       }, {
-        xtype: 'panel',
-        cls: 'logs'
+        xtype: 'button',
+        cls: 'spacer',
+        html: '&nbsp;'
+      }, {
+        xtype: 'list',
+        cls: 'logs',
+        id: 'logsPanel',
+
+        // layout: 'fit',
+        flex: 1,
+
+        scrollable: {
+          direction: 'vertical',
+          directionLock: true
+        },
+
+        pressedCls: null,
+        disableSelection: true,
+
+        store: {
+          fields: ['time', 'guide_id', 'status', 'message'],
+
+          sorters: [
+            {
+              property : 'time',
+              direction: 'DESC'
+            }
+          ],
+
+          data: []
+        },
+
+        emptyText: 'logs is unavailable...',
+
+        itemTpl: new Ext.XTemplate(
+          '<div class="guide">',
+            '<span class="guide_id">{guide_id}</span>',
+            '<span class="time">{[this.displayTime(values.time)]}</span>',
+          '</div>',
+          '<tpl if="status != \'successfull\' ">',
+            '<div class="error">{message}</div>',
+          '</tpl>',
+          {
+            displayTime: function(time) {
+              return I18n.l('time.formats.long', parseInt(time) * 1000);
+            }
+          }
+        )
       }
     ]
   }

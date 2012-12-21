@@ -17,6 +17,6 @@ Ext.define('app.model.GuideSync', {
   },
 
   isSynchronized: function(key) {
-    return !Ext.isEmpty(this.get('synchronized_at'));
+    return !Ext.isEmpty(this.get('synchronized_at')) && !Ext.isEmpty(this.get('identifier'));
   }
 });

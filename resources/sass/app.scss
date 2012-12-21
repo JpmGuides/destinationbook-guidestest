@@ -15,13 +15,6 @@
     padding: 1em;
   }
 
-  .x-panel.logs {
-    font-size: 0.9em;
-    text-align: center;
-    margin: 20px 8px 10px 8px;
-    font-family: $second-font-family;
-  }
-
   .x-field-input .x-clear-icon {
     background-image: inline-image('clear-icon.png');
   }
@@ -62,6 +55,14 @@
     &.x-button-pressing {
       background-color: #d9d9d9;
     }
+
+    &.spacer {
+      border-color: #ffffff;
+
+      &.x-button-pressing {
+        background-color: inherit;
+      }
+    }
   }
 
   .progress-bar {
@@ -86,6 +87,55 @@
     .message {
       position: relative;
       z-index: 1;
+    }
+  }
+
+  .x-button.guide:not(.x-item-hidden) + .x-button.spacer {
+    display: none !important;
+  }
+
+  .x-list.logs {
+    font-size: 0.8em;
+    font-family: $second-font-family;
+    margin-top: 10px;
+    border: 1px solid #d9d9d9;
+
+    .x-list-inner {
+      background: #ffffff;
+      padding: 0;
+    }
+
+    .x-list-emptytext .x-innerhtml {
+      padding-top: 0.7em;
+      text-align: center;
+      color: #ff3535;
+    }
+
+    .x-list-item {
+      width: 100%;
+
+      .x-list-item-label {
+        @include display-box;
+        @include box-orient(vertical);
+        @include box-align(stretch);
+        @include box-pack(start);
+        padding: 0.4em;
+
+        .guide {
+          @include display-box;
+          @include box-orient(horizontal);
+          @include box-align(center);
+          @include box-pack(justify);
+
+          span {
+            display: block;
+          }
+        }
+
+        .error {
+          color: #ff3535;
+        }
+      }
     }
   }
 }
