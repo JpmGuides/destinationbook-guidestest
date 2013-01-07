@@ -7,4 +7,5 @@ gem 'zip'
 gem 'nokogiri'
 gem 'rmagick', :require => 'RMagick'
 gem 'listen'
+gem 'daemons'
 

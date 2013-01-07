@@ -30,6 +30,7 @@ GEM
       multi_json (~> 1.0)
     arel (3.0.2)
     builder (3.0.4)
+    daemons (1.1.8)
     erubis (2.7.0)
     ffi (1.0.11)
     hike (1.2.1)
@@ -98,6 +99,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  daemons
   listen
   nokogiri
   rails (= 3.2.8)
