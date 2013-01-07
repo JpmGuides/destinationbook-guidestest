@@ -15,7 +15,7 @@ namespace :listner do
     end
  
     puts "---------------------------------------------------"
-    puts "Server is accessible by it's hostname : #{system('hostname')}"
+    puts "Server is accessible by it's hostname : #{`hostname`}"
     puts "or by it's ip : #{local_ip}"
     puts "---------------------------------------------------"
     
