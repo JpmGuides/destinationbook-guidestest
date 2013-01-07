@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'nokogiri'
+require 'json'
 
 class ExportGuides
   class Guide

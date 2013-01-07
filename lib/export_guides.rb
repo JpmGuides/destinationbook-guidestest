@@ -1,4 +1,5 @@
 # encoding: utf-8
+require 'json'
 require 'export_guides/guide'
 require 'export_guides/image'
 
