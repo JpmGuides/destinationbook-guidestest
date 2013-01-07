@@ -1,9 +1,25 @@
+require 'socket'
+
 namespace :listner do
 
   desc 'start a listner to update guides'
   task :start => :environment do
 
     json_status_file = "#{Rails.root}/public/status.json"
+
+    orig, Socket.do_not_reverse_lookup = Socket.do_not_reverse_lookup, true  # turn off reverse DNS resolution temporarily
+
+    local_ip = UDPSocket.open do |s|
+      s.connect '64.233.187.99', 1
+      s.addr.last
+    end
+
+    hostname = system('hostname')
+ 
+    puts "---------------------------------------------------"
+    puts "Server is accessible by it's hostname : #{hostname}"
+    puts "or by it's ip : #local_ip{}"
+    puts "---------------------------------------------------"
     
     Listen.to("#{Rails.root}/public/zip", latency: 10, filter: /\.zip/) do |modified, added|
   
