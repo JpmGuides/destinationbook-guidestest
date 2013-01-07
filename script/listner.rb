@@ -15,7 +15,7 @@ options = {
 
 Daemons.run_proc('listner.rb', options) do
 
-  ROOT = Rails.root
+  ROOT = '/var/www/local_guide'
 
   begin 
     json_status_file = "#{ROOT}/public/status.json"
