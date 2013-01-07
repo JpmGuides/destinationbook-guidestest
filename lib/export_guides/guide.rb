@@ -210,7 +210,7 @@ class ExportGuides
       FileUtils.mkdir_p(path) if !File.exists?(path)
 
       local_file = File.open("#{path}/guide.json", 'wb+')
-      local_file.write(@generation)
+      local_file.write(@generation.to_json)
       local_file.close
 
       Rails.cache.write("last_modified_#{self.id}",  File.mtime(path))
