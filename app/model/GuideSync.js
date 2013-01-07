@@ -12,7 +12,7 @@ Ext.define('app.model.GuideSync', {
 
     proxy: {
       type: 'localstorage',
-      id: 'travel-model'
+      id: 'guide-sync-model'
     }
   },
 
