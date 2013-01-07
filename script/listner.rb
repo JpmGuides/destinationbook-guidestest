@@ -2,7 +2,7 @@
 APP_PATH = File.expand_path('../../config/application',  __FILE__)
 require File.expand_path('../../config/boot',  __FILE__)
 
-require 'lib/export_guides'
+require 'export_guides'
 require 'socket'
 require 'daemons'
 require 'listen'
