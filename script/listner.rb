@@ -1,6 +1,9 @@
+
+APP_PATH = File.expand_path('../../config/application',  __FILE__)
+require File.expand_path('../../config/boot',  __FILE__)
+
 require 'socket'
 require 'daemons'
-require 'rails'
 require 'listen'
 
 options = {
@@ -12,7 +15,7 @@ options = {
 
 Daemons.run_proc('listner.rb', options) do
 
-  ROOT = '/var/www/local_guide'
+  ROOT = Rails.root
 
   begin 
     json_status_file = "#{ROOT}/public/status.json"

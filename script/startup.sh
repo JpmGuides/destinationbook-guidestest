@@ -1,8 +1,8 @@
 #! /bin/bash
 
 cd /var/www/local_guide
+ruby script/listner.rb stop
+sleep 1
 git pull origin server
 touch tmp/restart.txt
-ruby lib/listner.rb stop
-sleep 1
-ruby lib/listner.rb start
+ruby script/listner.rb start
