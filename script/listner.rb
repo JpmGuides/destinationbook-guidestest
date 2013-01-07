@@ -1,8 +1,7 @@
-
+ENV['RAILS_ENV'] = ENV['RAILS_ENV'] || 'development'
 APP_PATH = File.expand_path('../../config/application',  __FILE__)
 require File.expand_path('../../config/boot',  __FILE__)
 
-require 'export_guides'
 require 'socket'
 require 'daemons'
 require 'listen'
