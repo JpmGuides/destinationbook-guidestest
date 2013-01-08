@@ -34,11 +34,7 @@ class ExportGuides
           if IMAGE_FILE.include?(type) && root == 'images'
             @nb_files += 1
 
-            if thumbnails.include?(entry.to_s)
-              size = MAX_THUMBNAIL_SIZE
-            else
-              size = MAX_IMAGE_SIZE
-            end
+            size = MAX_IMAGE_SIZE
 
             ext = File.extname(entry.to_s)
             ext.slice!(0)
@@ -53,6 +49,20 @@ class ExportGuides
           end
 
         end
+      end
+
+      thumbnails.each do |thumb|
+        @nb_files += 1
+
+        real_thumb_name = thumb.split('.').first + '__thumb.' + thumb.split('.').last
+
+        size = MAX_THUMBNAIL_SIZE
+
+        ext = File.extname(thumb)
+        ext.slice!(0)
+        image = ExportGuides::Image.new(File.basename(real_thumb_name, '.*'), @zip_data.read(thumb), @id, {:extension => ext, :width => size[:width], :height => size[:height]})
+        
+        images << {:path => real_thumb_name, :url => image.save }
       end
 
       images
@@ -83,6 +93,8 @@ class ExportGuides
       current_guide = {}
       thumbnails = []
 
+      FileUtils.mkdir_p("#{Rails.root}/tmp") if !File.exists?("#{Rails.root}/tmp")
+
       File.delete("#{Rails.root}/tmp/#{@id}.html") if File.exists?("#{Rails.root}/tmp/#{@id}.html")
 
       begin
@@ -105,8 +117,9 @@ class ExportGuides
       current_guide[:id] = @id
 
       if image = guide.xpath('./content/h1/img').first
-        current_guide[:titleImage] = image['src']
-        thumbnails << image['src']
+        image_path = image['src']
+        current_guide[:titleImage] = image_path.split('.').first + '__thumb.' + image_path.split('.').last
+        thumbnails << image_path
         image.remove
       end
 
@@ -133,6 +146,7 @@ class ExportGuides
         thumbnails << result.last
       end
       current_guide[:children].compact!
+      thumbnails.flatten!
 
       current_guide[:images] = export_images(thumbnails)
       current_guide[:maps] = maps
@@ -165,8 +179,9 @@ class ExportGuides
       title_html = child_html.xpath(TITLES_XPATH).first
 
       if image_html = title_html.xpath('./img').first
-        child[:titleImage] = image_html['src']
-        child_thumbnails << image_html['src']
+        image_path = image_html['src']
+        child[:titleImage] = image_path.split('.').first + '__thumb.' + image_path.split('.').last
+        child_thumbnails << image_path
         image_html.remove
       end
 
