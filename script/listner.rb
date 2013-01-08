@@ -44,6 +44,7 @@ Daemons.run_proc('listner.rb', options) do
           guide.generate
 
           puts "guide #{guide_id} was generated successfully"
+          FileUtils.rm_rf(change)
 
           begin
             status = JSON.parse(File.read(json_status_file))
