@@ -516,8 +516,8 @@
 				INFOPLIST_FILE = "DestinationBookGuidesTest/DestinationBookGuidesTest-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = DestinationBookGuidesTest;
-				PROVISIONING_PROFILE = "986962C2-656D-40C1-805A-138DA5B8CC78";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "986962C2-656D-40C1-805A-138DA5B8CC78";
+				PROVISIONING_PROFILE = "7E6E6311-59FB-42F1-AB28-1A89C0762D4E";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "7E6E6311-59FB-42F1-AB28-1A89C0762D4E";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
@@ -529,7 +529,8 @@
 					armv6,
 					armv7,
 				);
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Yann Lugrin (J45A86YX42)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Yann Lugrin (J45A86YX42)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -554,6 +555,8 @@
 					"-all_load",
 					"-Obj-C",
 				);
+				PROVISIONING_PROFILE = "220E1B98-672D-45DB-B6C0-AF3818E6993B";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "220E1B98-672D-45DB-B6C0-AF3818E6993B";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -567,7 +570,8 @@
 					armv6,
 					armv7,
 				);
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Liquid Concept Sarl";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Liquid Concept Sarl";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -592,6 +596,8 @@
 					"-all_load",
 					"-Obj-C",
 				);
+				PROVISIONING_PROFILE = "986962C2-656D-40C1-805A-138DA5B8CC78";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "986962C2-656D-40C1-805A-138DA5B8CC78";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
 				USER_HEADER_SEARCH_PATHS = "";
