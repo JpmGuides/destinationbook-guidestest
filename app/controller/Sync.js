@@ -24,7 +24,7 @@ Ext.define('app.controller.Sync', {
 
   connectionStates: {},
 
-  refreshLogsDelay: 10000,
+  refreshLogsDelay: 5000,
 
   launch: function() {
     this.getSyncCard().setValues(app.guideSync.data);
@@ -74,6 +74,7 @@ Ext.define('app.controller.Sync', {
     this.refreshLogs = Ext.Function.createDelayed(this.refreshLogs, this.refreshLogsDelay, this);
 
     if (Ext.isEmpty(app.guideSync) || Ext.isEmpty(app.guideSync.get('host'))) {
+      this.getLogsPanel().setEmptyText(I18n.t('sync.errors.logs_unavailable.message', { locale: I18n.phoneLocale }))
       this.refreshLogs();
       return;
     }
@@ -82,7 +83,7 @@ Ext.define('app.controller.Sync', {
       url: 'http://' + app.guideSync.get('host') + '/status.json',
       method: 'GET',
       scope: this,
-      timeout: 30000,
+      timeout: this.refreshLogsDelay,
 
       // ignore failure
       failure: function(response, request) {
