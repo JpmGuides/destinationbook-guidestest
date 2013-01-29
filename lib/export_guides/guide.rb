@@ -4,7 +4,7 @@ require 'nokogiri'
 class ExportGuides
   class Guide
 
-    attr_accessor :id, :path, :zip_data, :generation, :nb_files
+    attr_accessor :id, :path, :zip_data, :generation
 
     TITLES_XPATH = './h1|./h2|./h3|./h4|./h5|./h6|./h7|./h8|./h9|./h10'
     MAX_IMAGE_SIZE = {:width => 640, :height => nil}
@@ -32,7 +32,6 @@ class ExportGuides
           root = entry.to_s.split('/').first
 
           if IMAGE_FILE.include?(type) && root == 'images'
-            @nb_files += 1
 
             size = MAX_IMAGE_SIZE
 
@@ -40,11 +39,14 @@ class ExportGuides
             ext.slice!(0)
             image = ExportGuides::Image.new(File.basename(entry.to_s, '.*'), @zip_data.read(entry), @id, {:extension => ext, :width => size[:width], :height => size[:height]})
             
-            images << {:path => entry.to_s, :url => image.save }
+            image_data = image.save
+            images << {:path => entry.to_s, :url => image_data[0], :size => image_data[1] }
           else
             if type == 'svg' && root == 'images'
               image = ExportGuides::Image.new(File.basename(entry.to_s, '.*'), @zip_data.read(entry), @id, {:extension => ext})
-              images << {:path => entry.to_s, :url => image.save }
+
+              image_data = image.save
+              images << {:path => entry.to_s, :url => image_data[0], :size => image_data[1] }
             end
           end
 
@@ -52,7 +54,6 @@ class ExportGuides
       end
 
       thumbnails.each do |thumb|
-        @nb_files += 1
 
         real_thumb_name = thumb.split('.').first + '__thumb.' + thumb.split('.').last
 
@@ -62,7 +63,8 @@ class ExportGuides
         ext.slice!(0)
         image = ExportGuides::Image.new(File.basename(real_thumb_name, '.*'), @zip_data.read(thumb), @id, {:extension => ext, :width => size[:width], :height => size[:height]})
         
-        images << {:path => real_thumb_name, :url => image.save }
+        image_data = image.save
+        images << {:path => real_thumb_name, :url => image_data[0], :size => image_data[1] }
       end
 
       images
@@ -78,9 +80,10 @@ class ExportGuides
           title = child_html.xpath('./h2').first.text
           path = child_html.xpath('./img').first['src']
 
-          @nb_files += 1
           map = ExportGuides::Image.new(File.basename(path, '.*'), @zip_data.read(path), @id, {:extension => 'svg', :type => 'maps'})
-          maps << {:title => title, :path => path, :url => map.save}
+
+          map_data = map.save
+          maps << {:title => title, :path => path, :url => map_data[0], :size => map_data[1] }
         end
         maps_article.remove
       end

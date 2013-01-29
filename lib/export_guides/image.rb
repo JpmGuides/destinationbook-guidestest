@@ -42,7 +42,7 @@ class ExportGuides
       local_file.write(data)
       local_file.close
   
-      "guides/#{guide_id}/#{options[:type]}/#{@name}.#{options[:extension]}"
+      ["guides/#{guide_id}/#{options[:type]}/#{@name}.#{options[:extension]}", File.size("#{path}/#{@name}.#{options[:extension]}")]
     end
 
   end
