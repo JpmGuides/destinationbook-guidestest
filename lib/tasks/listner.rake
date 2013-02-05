@@ -44,6 +44,7 @@ namespace :listner do
             f.write(status.to_json)
           end
 
+          FileUtils.rm("#{Rails.root}/public/zip/#{guide_id}.zip")
         rescue => e
 
           if e.message != 'Zip end of central directory signature not found'
