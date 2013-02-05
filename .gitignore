@@ -2,6 +2,7 @@
 /db/*.sqlite3
 /log/*
 /tmp
+/public/status.json
 /public/uploads
 /public/assets
 /public/zip/*
