@@ -4,4 +4,5 @@ Localguide::Application.routes.draw do
 
   match '/status', :controller => 'status', :action => 'show', :via => :get
 
+  root to: 'status#show'
 end
