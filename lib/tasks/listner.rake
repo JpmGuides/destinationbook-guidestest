@@ -47,7 +47,7 @@ namespace :listner do
           if waiting > 0
             print '.'
           else
-            print "waiting on guide #{guide_id} zip transfert."
+            print "#{guide_id}: waiting on zip file."
           end
 
           if waiting <= 10.minutes
@@ -62,7 +62,7 @@ namespace :listner do
 
         begin
           # display starting process in console
-          puts "generation of #{guide_id} started"
+          puts "#{guide_id}: generation started"
 
           # cleanup old generated guide
           FileUtils.rm_rf("#{Rails.root}/public/guides/#{guide_id}")
@@ -71,13 +71,12 @@ namespace :listner do
           ExportGuides::Guide.new(guide_id, change, guide_zip).generate
 
           # display success message
-          puts "guide #{guide_id} was generated successfully"
+          puts "#{guide_id}: generated successfully"
           write_status_message.call(guide_id, 'successfull')
 
         rescue => e
           # display error in guide generation
-          puts "error on guide #{guide_id} : #{e.message}"
-          puts "generation of #{guide_id} failed"
+          puts "#{guide_id}: generation failed\n#{e.message}"
           write_status_message.call(guide_id, 'error', e.message)
 
         ensure
