@@ -6,15 +6,15 @@ namespace :listner do
   task :start => :environment do
     $stdout.sync = true
 
-    write_status_message = Proc.new do |guide_id, status, message|
+    write_status_message = Proc.new do |guide_id, status_name, status_message|
       File.open("#{Rails.root}/public/status.json", 'rb+') do |file|
         status = JSON.parse(file.read).shift(49) rescue []
 
         status.unshift(
           time: Time.now.to_i,
           guide_id: guide_id,
-          status: status,
-          message: message
+          status: status_name,
+          message: status_message
         )
 
         file.truncate(0)
@@ -46,10 +46,8 @@ namespace :listner do
         rescue
           if waiting > 0
             print '.'
-            $stdout.flush
           else
             print "waiting on guide #{guide_id} zip transfert."
-            $stdout.flush
           end
 
           if waiting <= 10.minutes
