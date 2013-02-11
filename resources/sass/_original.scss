@@ -563,7 +563,7 @@ $custom-list-header-item-gradient: $base-gradient;
       }
 
       p {
-        display: inline-block;
+        display: block;
         font-size: 1em;
         padding: 0 1.2em 0.6em 1.2em;
         line-height: 1.4em;
@@ -580,6 +580,19 @@ $custom-list-header-item-gradient: $base-gradient;
 
         a {
           @include unstyled-link;
+        }
+      }
+
+      ul {
+        @extend p;
+        margin-left: 1.2em;
+
+        li {
+          list-style-type: disc;
+        }
+
+        ul {
+          margin-left: 0;
         }
       }
 
