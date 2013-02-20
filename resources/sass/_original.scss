@@ -642,9 +642,13 @@ $custom-list-header-item-gradient: $base-gradient;
   }
 
   .custom-list-item-label-text {
+    padding-right: 0.4em !important;
+
     span {
       &.title {
         font-size: 1.19em !important;
+        width: 100%;
+        padding-right: 1em;
       }
 
       &.description {
