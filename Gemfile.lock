@@ -1,0 +1,14 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    daemons (1.1.9)
+    listen (0.7.3)
+    rb-fsevent (0.9.3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  daemons
+  listen
+  rb-fsevent

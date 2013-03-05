@@ -1,0 +1,4 @@
+*.pid
+/input
+/result
+/processing
