@@ -1,6 +1,6 @@
 #! /bin/bash
 
-cd /var/www/local_guide
+cd /www/local_guide
 ruby script/listner.rb stop
 sleep 1
 git pull origin server
