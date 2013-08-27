@@ -38,7 +38,7 @@ class ExportGuides
             ext = File.extname(entry.to_s)
             ext.slice!(0)
             image = ExportGuides::Image.new(File.basename(entry.to_s, '.*'), @zip_data.read(entry), @id, {:extension => ext, :width => size[:width], :height => size[:height]})
-            
+
             image_data = image.save
             images << {:path => entry.to_s, :url => image_data[0], :size => image_data[1] }
           else
@@ -62,7 +62,7 @@ class ExportGuides
         ext = File.extname(thumb)
         ext.slice!(0)
         image = ExportGuides::Image.new(File.basename(real_thumb_name, '.*'), @zip_data.read(thumb), @id, {:extension => ext, :width => size[:width], :height => size[:height]})
-        
+
         image_data = image.save
         images << {:path => real_thumb_name, :url => image_data[0], :size => image_data[1] }
       end
@@ -106,7 +106,7 @@ class ExportGuides
         @zip_data.extract('guide.html', "#{Rails.root}/tmp/#{@id}.html")
       end
 
-      file = File.open("#{Rails.root}/tmp/#{@id}.html", "r") 
+      file = File.open("#{Rails.root}/tmp/#{@id}.html", "r")
       guide_text = file.read.force_encoding("UTF-8")
       guide_text.gsub!("\xEF\xBB\xBF".force_encoding("UTF-8"), '')
 
@@ -154,7 +154,7 @@ class ExportGuides
       current_guide[:images] = export_images(thumbnails)
       current_guide[:maps] = maps
 
-      current_guide[:content] = guide.xpath('./content').inner_html if guide.xpath('./content').inner_html.present?      
+      current_guide[:content] = guide.xpath('./content').inner_html if guide.xpath('./content').inner_html.present?
 
       @generation = current_guide
     end
@@ -178,6 +178,9 @@ class ExportGuides
       end
       child_html.xpath('./content').first.try(:remove)
 
+      anchors = child_html.css('[data-link-anchor]').map { |anchor| anchor['data-link-anchor'] }
+      child[:linkAnchors] = anchors if !anchors.empty?
+
       # Header & Title
       title_html = child_html.xpath(TITLES_XPATH).first
 
@@ -193,10 +196,10 @@ class ExportGuides
       end
 
       child[:title] = title_html.inner_html
-      
+
       if image_html = title_html.xpath('./following-sibling::*[1][self::img]').first
         child[:headerImageLegend] = image_html['title'] if image_html['title']
-        child[:headerImage] = image_html['src'] 
+        child[:headerImage] = image_html['src']
         image_html.remove
       end
 
@@ -213,7 +216,7 @@ class ExportGuides
         end
 
       end
-    
+
       # Content
       child[:content] = child_html.inner_html if child_html.inner_html.present?
 
