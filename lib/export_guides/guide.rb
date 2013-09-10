@@ -184,6 +184,9 @@ class ExportGuides
       target = child_html.xpath('.').first['data-link-target']
       child[:linkTarget] = target
 
+      chapter_type = child_html.xpath('.').first['id']
+      child[:index] = true if chapter_type == 'index'
+
       # Header & Title
       title_html = child_html.xpath(TITLES_XPATH).first
 
