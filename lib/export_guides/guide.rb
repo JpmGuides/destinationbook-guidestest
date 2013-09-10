@@ -181,6 +181,9 @@ class ExportGuides
       anchors = child_html.css('[data-link-anchor]').map { |anchor| anchor['data-link-anchor'] }
       child[:linkAnchors] = anchors if !anchors.empty?
 
+      target = child_html.xpath('.').first['data-link-target']
+      child[:linkTarget] = target
+
       # Header & Title
       title_html = child_html.xpath(TITLES_XPATH).first
 
