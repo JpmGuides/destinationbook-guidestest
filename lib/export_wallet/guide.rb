@@ -25,19 +25,19 @@ class ExportWallet
     ##############
 
     def generated_path
-      @generated_path ||= File.join(Settings.path.guides_generated, id)
+      File.join(Settings.path.guides_generated, @id)
     end
 
     def generated_file_path
-      @generated_file_path ||= File.join(@generated_path, 'guide.zip')
+      File.join(generated_path, 'guide.zip')
     end
 
     def zip_tempfile_path
-      @zip_tempfile_path ||= "#{Rails.root}/tmp/tiled_#{@id}_#{Process.pid}_#{Time.now.to_i}.zip"
+      "#{Rails.root}/tmp/tiled_#{@id}_#{Process.pid}_#{Time.now.to_i}.zip"
     end
 
     def cache_key
-      @cache_key ||= "export_guide_#{@id}"
+      "export_guide_#{@id}"
     end
 
     ###############
@@ -47,8 +47,8 @@ class ExportWallet
     def self.get(guide_id)
       file_meta = Rails.cache.read("export_guide_#{guide_id}")
       if file_meta.nil?
-        if File.exists?(generated_file_path)
-          guide = ExportWallet::Guide.new(guide_id, "#{Settings.path.guides_zip}/#{guide_id}.zip")
+        if File.exists?("#{Settings.path.guides_generated}/#{guide_id}/guide.zip")
+          guide = ExportWallet::Guide.new(guide_id, "#{Settings.path.guides_generated}/#{guide_id}.zip")
           guide.cache!
           file_meta = get(guide_id)
         else
@@ -62,7 +62,7 @@ class ExportWallet
     def cache!
       if File.exists?(generated_file_path)
         guide = File.open(generated_file_path)
-        Rails.cache.write(cache_key, {size: guide.size,  generated_at: guide.mtime, path: generated_file_path})
+        Rails.cache.write(cache_key, {size: guide.size,  generated_at: guide.mtime})
       else
         Rails.cache.delete(cache_key)
       end

@@ -18,19 +18,30 @@ Daemons.run_proc('listner.rb', options) do
   ROOT = Rails.root
 
   begin
-
     write_status_message = Proc.new do |guide_id, status_name, status_message|
-      File.open("#{ROOT}/public/status.json", 'rb+') do |file|
-        status = JSON.parse(file.read).shift(49) rescue []
+      if !File.exists?("#{ROOT}/public/status/status.json")
+        FileUtils.mkdir_p("#{ROOT}/public/status/")
+        FileUtils.touch("#{ROOT}/public/status/status.json")
+      end
 
-        status.unshift(
-          time: Time.now.to_i,
-          guide_id: guide_id,
-          status: status_name,
-          message: status_message
-        )
+      status = []
 
-        file.truncate(0)
+      File.open("#{ROOT}/public/status/status.json", 'r') do |file|
+        status = JSON.parse(file.read) rescue []
+      end
+
+      if status.count >= 5
+        status = status.shift(4)
+      end
+
+      status.unshift(
+        time: Time.now.to_i,
+        guide_id: guide_id,
+        status: status_name,
+        message: status_message
+      )
+
+      File.open("#{ROOT}/public/status/status.json", 'w') do |file|
         file.write(status.to_json)
       end
     end

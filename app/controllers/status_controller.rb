@@ -1,7 +1,7 @@
 class StatusController < ApplicationController
 
   def show
-    json_path =  "#{Rails.root}/public/status.json"
+    json_path =  "#{Rails.root}/public/status/status.json"
 
     if File.exists?(json_path)
       if stale?(last_modified: File.mtime(json_path))
