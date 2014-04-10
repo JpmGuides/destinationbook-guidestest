@@ -42,7 +42,7 @@ namespace :listner do
 
         waiting = 0
         begin
-          guide_zip = Zip::ZipFile.open(change)
+          guide_zip = Zip::File.open(change)
         rescue
           if waiting > 0
             print '.'
@@ -68,7 +68,7 @@ namespace :listner do
           FileUtils.rm_rf("#{Rails.root}/public/guides/#{guide_id}")
 
           # generate guide
-          ExportGuides::Guide.new(guide_id, change, guide_zip).generate
+          ExportWallet::Guide.new(guide_id, change, guide_zip).generate
 
           # display success message
           puts "#{guide_id}: generated successfully"

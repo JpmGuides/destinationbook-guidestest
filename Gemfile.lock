@@ -1,3 +1,9 @@
+GIT
+  remote: git://github.com/rubyzip/rubyzip.git
+  revision: 47ef890de65cbf6b37e43995c291d74605b2491f
+  specs:
+    rubyzip (1.1.3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -86,7 +92,6 @@ GEM
       polyglot
       polyglot (>= 0.3.1)
     tzinfo (0.3.35)
-    zip (2.0.2)
 
 PLATFORMS
   ruby
@@ -99,5 +104,5 @@ DEPENDENCIES
   rails_config
   rb-fsevent
   rmagick
+  rubyzip!
   sqlite3
-  zip

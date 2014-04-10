@@ -17,8 +17,23 @@ options = {
 Daemons.run_proc('listner.rb', options) do
   ROOT = Rails.root
 
-  begin 
-    json_status_file = "#{ROOT}/public/status.json"
+  begin
+
+    write_status_message = Proc.new do |guide_id, status_name, status_message|
+      File.open("#{ROOT}/public/status.json", 'rb+') do |file|
+        status = JSON.parse(file.read).shift(49) rescue []
+
+        status.unshift(
+          time: Time.now.to_i,
+          guide_id: guide_id,
+          status: status_name,
+          message: status_message
+        )
+
+        file.truncate(0)
+        file.write(status.to_json)
+      end
+    end
 
     orig, Socket.do_not_reverse_lookup = Socket.do_not_reverse_lookup, true  # turn off reverse DNS resolution temporarily
     local_ip = UDPSocket.open do |s|
@@ -28,63 +43,61 @@ Daemons.run_proc('listner.rb', options) do
 
     puts "---------------------------------------------------"
     puts "Server is accessible by it's hostname : #{`hostname`}"
-    puts "or by it's ip : #{local_ip}"
+    puts "or by it's ip: #{local_ip}"
+    puts "Waiting for guide zip in:"
+    puts "#{ROOT}/public/zip"
     puts "---------------------------------------------------"
 
-    Listen.to("#{ROOT}/public/zip", latency: 10, filter: /\.zip/) do |modified, added|
+    Listen.to("#{ROOT}/public/zip", latency: 1, filter: /\.zip$/) do |modified, added|
+      (modified + added).each do |change|
+        guide_id = File.basename(change, '.*')
 
-      changes = modified + added
-
-      changes.each do |change|
+        waiting = 0
         begin
-
-          guide_id = File.basename(change, '.*')
-          guide = ExportGuides::Guide.new(guide_id, change, Zip::ZipFile.open(change))
-          FileUtils.rm_rf("#{ROOT}/public/guides/#{guide_id}")
-          guide.generate
-
-          puts "guide #{guide_id} was generated successfully"
-          FileUtils.rm_rf(change)
-
-          begin
-            status = JSON.parse(File.read(json_status_file))
-          rescue
-            status = []
+          guide_zip = Zip::File.open(change)
+        rescue
+          if waiting > 0
+            print '.'
+          else
+            print "#{guide_id}: waiting on zip file."
           end
-          
-          status.unshift({:time => Time.now.to_i, :guide_id => guide_id, :status => 'successfull'})
-          status.pop if status.count >  50
-          
-          File.open(json_status_file, 'wb+') do |f|
-            f.write(status.to_json)
+
+          if waiting <= 10.minutes
+            waiting += 1
+            sleep 1
+            retry
+          else
+            raise
           end
+        end
+        print "\n" if waiting > 0
+
+        begin
+          # display starting process in console
+          puts "#{guide_id}: generation started"
+
+          # cleanup old generated guide
+          FileUtils.rm_rf("#{Rails.root}/public/guides/#{guide_id}")
+
+          # generate guide
+          ExportWallet::Guide.new(guide_id, change, guide_zip).generate
+
+          # display success message
+          puts "#{guide_id}: generated successfully"
+          write_status_message.call(guide_id, 'successfull')
 
         rescue => e
+          # display error in guide generation
+          puts "#{guide_id}: generation failed\n#{e.message}"
+          write_status_message.call(guide_id, 'error', e.message)
 
-          if e.message != 'Zip end of central directory signature not found'
-            puts "error on guide #{guide_id} : #{e.message}"
-            puts "generation of #{guide_id} failed"
-            
-            begin
-              status = JSON.parse(File.read(json_status_file))
-            rescue
-              status = []
-            end
-            status.unshift({:time => Time.now.to_i, :guide_id => guide_id, :status => 'error', :message => e.message})
-            status.pop if status.count >  50
-            File.open(json_status_file, 'wb+') do |f|
-              f.write(status.to_json)
-            end
-
-          else
-            changes.push(change)
-            sleep 1
-          end
-
+        ensure
+          # remove guide zip
+          FileUtils.rm("#{Rails.root}/public/zip/#{guide_id}.zip")
         end
       end
-
     end
-  end
 
+  end
 end
+

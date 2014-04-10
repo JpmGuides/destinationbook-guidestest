@@ -1,10 +1,10 @@
 # encoding: utf-8
 require 'nokogiri'
 
-class ExportGuides
+class ExportWallet
   class Guide
 
-    attr_accessor :id, :path, :zip_data, :generation
+    attr_accessor :id, :path, :zip_data
 
     TITLES_XPATH = './h1|./h2|./h3|./h4|./h5|./h6|./h7|./h8|./h9|./h10'
     MAX_IMAGE_SIZE = {:width => 640, :height => nil}
@@ -16,7 +16,61 @@ class ExportGuides
       @path = path
       @zip_data = zip_data
       @nb_files = 1
+      @maps = []
+      @images = []
     end
+
+    ##############
+    # attributes #
+    ##############
+
+    def generated_path
+      @generated_path ||= File.join(Settings.path.guides_generated, id)
+    end
+
+    def generated_file_path
+      @generated_file_path ||= File.join(@generated_path, 'guide.zip')
+    end
+
+    def zip_tempfile_path
+      @zip_tempfile_path ||= "#{Rails.root}/tmp/tiled_#{@id}_#{Process.pid}_#{Time.now.to_i}.zip"
+    end
+
+    def cache_key
+      @cache_key ||= "export_guide_#{@id}"
+    end
+
+    ###############
+    # api methods #
+    ###############
+
+    def self.get(guide_id)
+      file_meta = Rails.cache.read("export_guide_#{guide_id}")
+      if file_meta.nil?
+        if File.exists?(generated_file_path)
+          guide = ExportWallet::Guide.new(guide_id, "#{Settings.path.guides_zip}/#{guide_id}.zip")
+          guide.cache!
+          file_meta = get(guide_id)
+        else
+          file_meta = nil
+        end
+      end
+
+      file_meta
+    end
+
+    def cache!
+      if File.exists?(generated_file_path)
+        guide = File.open(generated_file_path)
+        Rails.cache.write(cache_key, {size: guide.size,  generated_at: guide.mtime, path: generated_file_path})
+      else
+        Rails.cache.delete(cache_key)
+      end
+    end
+
+    ######################
+    # generation methods #
+    ######################
 
     def generate
       export
@@ -24,7 +78,7 @@ class ExportGuides
     end
 
     def export_images(thumbnails)
-      images = []
+      images_json_content = []
 
       @zip_data.each do |entry|
         if entry.file?
@@ -32,63 +86,68 @@ class ExportGuides
           root = entry.to_s.split('/').first
 
           if IMAGE_FILE.include?(type) && root == 'images'
-
             size = MAX_IMAGE_SIZE
-
             ext = File.extname(entry.to_s)
             ext.slice!(0)
+
             image = ExportGuides::Image.new(File.basename(entry.to_s, '.*'), @zip_data.read(entry), @id, {:extension => ext, :width => size[:width], :height => size[:height]})
 
-            image_data = image.save
-            images << {:path => entry.to_s, :url => image_data[0], :size => image_data[1] }
-          else
-            if type == 'svg' && root == 'images'
-              image = ExportGuides::Image.new(File.basename(entry.to_s, '.*'), @zip_data.read(entry), @id, {:extension => ext})
-
-              image_data = image.save
-              images << {:path => entry.to_s, :url => image_data[0], :size => image_data[1] }
-            end
+            @images << {:path => entry.to_s, :data => image.process(size[:width], size[:height])}
+            images_json_content << {:path => entry.to_s}
+          elsif type == 'svg' && root == 'images'
+            @images << {:path => entry.to_s, :data => @zip_data.read(entry)}
+            images_json_content << {:path => entry.to_s}
           end
-
         end
       end
 
       thumbnails.each do |thumb|
-
         real_thumb_name = thumb.split('.').first + '__thumb.' + thumb.split('.').last
 
         size = MAX_THUMBNAIL_SIZE
-
         ext = File.extname(thumb)
         ext.slice!(0)
+
         image = ExportGuides::Image.new(File.basename(real_thumb_name, '.*'), @zip_data.read(thumb), @id, {:extension => ext, :width => size[:width], :height => size[:height]})
 
-        image_data = image.save
-        images << {:path => real_thumb_name, :url => image_data[0], :size => image_data[1] }
+        @images << {:path => real_thumb_name, :data => image.process(size[:width], size[:height]) }
+        images_json_content << {:path => real_thumb_name}
       end
 
-      images
+      images_json_content
     end
 
     def export_maps(guide_html)
-      maps = []
+      maps_json_content = []
 
       maps_article = guide_html.xpath('//*[@id="maps"]').first
 
       if maps_article
         maps_article.xpath('./content/article').each do |child_html|
           title = child_html.xpath('./h2').first.text
-          path = child_html.xpath('./img').first['src']
+          tile = child_html.xpath('./div').first
 
-          map = ExportGuides::Image.new(File.basename(path, '.*'), @zip_data.read(path), @id, {:extension => 'svg', :type => 'maps'})
+          path = /(maps\/.[^\/]+)/.match(tile['data-map-url'])[0]
+          map_files = []
 
-          map_data = map.save
-          maps << {:title => title, :path => path, :url => map_data[0], :size => map_data[1] }
+          @zip_data.each do |entry|
+            root = entry.to_s.split('/').first
+
+            if root == 'maps' && entry.to_s.include?(path) && File.extname(entry.to_s).present?
+              map_files << {path: entry.to_s, data: @zip_data.read(entry)}
+            end
+          end
+
+          if !map_files.empty?
+            @maps << {:title => title, :path => path, :files => map_files }
+            maps_json_content << {:title => title, :path => path, url: tile['data-map-url'], width: tile['data-map-width'], height: tile['data-map-height'], tileSize: tile['data-map-tilesize'], minScale: tile['data-map-minscale']}
+          end
         end
+
         maps_article.remove
       end
 
-      maps
+      maps_json_content
     end
 
     def export
@@ -178,14 +237,14 @@ class ExportGuides
       end
       child_html.xpath('./content').first.try(:remove)
 
-      anchors = child_html.css('[data-link-anchor]').map { |anchor| anchor['data-link-anchor'] }
-      child[:linkAnchors] = anchors if !anchors.empty?
+      chapter_type = child_html.xpath('.').first['id']
+      child[:index] = true if chapter_type == 'index'
 
       target = child_html.xpath('.').first['data-link-target']
       child[:linkTarget] = target
 
-      chapter_type = child_html.xpath('.').first['id']
-      child[:index] = true if chapter_type == 'index'
+      anchors = child_html.css('[data-link-anchor]').map { |anchor| anchor['data-link-anchor'] }
+      child[:linkAnchors] = anchors if !anchors.empty?
 
       # Header & Title
       title_html = child_html.xpath(TITLES_XPATH).first
@@ -232,17 +291,31 @@ class ExportGuides
     end
 
     def save
-      path = "#{Settings.path.guides_generated}/#{id}"
+      File.delete(zip_tempfile_path) if File.exists?(zip_tempfile_path)
 
-      FileUtils.mkdir_p(path) if !File.exists?(path)
+      FileUtils.mkdir_p(generated_path) if !File.exists?(generated_path)
 
-      local_file = File.open("#{path}/guide.json", 'wb+')
-      local_file.write(@generation.to_json)
-      local_file.close
+      Zip::File.open(generated_file_path, Zip::File::CREATE) do |zip|
+        zip.mkdir('images')
+        @images.each do |image|
+          zip.get_output_stream(image[:path]) { |f| f.puts image[:data] }
+        end
+
+        zip.mkdir('maps')
+        @maps.each do |map|
+          map[:files].each do |file|
+            zip.get_output_stream(file[:path]) { |f| f.puts file[:data] }
+          end
+        end
+
+        zip.get_output_stream('guide.json') { |f| f.puts @generation.to_json }
+      end
 
       Rails.cache.write("last_modified_#{self.id}",  File.mtime(path))
       Rails.cache.delete("on_error_#{self.id}")
       true
+    ensure
+      cache!
     end
 
   end
