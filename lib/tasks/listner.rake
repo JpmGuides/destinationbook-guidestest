@@ -7,22 +7,13 @@ namespace :listner do
     $stdout.sync = true
 
     write_status_message = Proc.new do |guide_id, status_name, status_message|
-      File.open("#{Rails.root}/public/status.json", 'w+') do |file|
-        status = JSON.parse(file.read) rescue []
-
-        if status.count >= 5
-          status = status.shift(4)
-        end
-
-        status.unshift(
-          time: Time.now.to_i,
-          guide_id: guide_id,
-          status: status_name,
-          message: status_message
-        )
-
-        file.write(status.to_json)
-      end
+      WRITER.write_json({
+        time: Time.now.to_i,
+        guide_id: guide_id,
+        status: status_name,
+        message: status_message
+      })
+      WRITER.write_html
     end
 
     orig, Socket.do_not_reverse_lookup = Socket.do_not_reverse_lookup, true  # turn off reverse DNS resolution temporarily

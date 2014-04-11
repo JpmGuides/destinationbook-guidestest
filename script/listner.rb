@@ -16,34 +16,17 @@ options = {
 
 Daemons.run_proc('listner.rb', options) do
   ROOT = Rails.root
+  WRITER = StatusWriter.new(ROOT)
 
   begin
     write_status_message = Proc.new do |guide_id, status_name, status_message|
-      if !File.exists?("#{ROOT}/public/status/status.json")
-        FileUtils.mkdir_p("#{ROOT}/public/status/")
-        FileUtils.touch("#{ROOT}/public/status/status.json")
-      end
-
-      status = []
-
-      File.open("#{ROOT}/public/status/status.json", 'r') do |file|
-        status = JSON.parse(file.read) rescue []
-      end
-
-      if status.count >= 5
-        status = status.shift(4)
-      end
-
-      status.unshift(
+      WRITER.write_json({
         time: Time.now.to_i,
         guide_id: guide_id,
         status: status_name,
         message: status_message
-      )
-
-      File.open("#{ROOT}/public/status/status.json", 'w') do |file|
-        file.write(status.to_json)
-      end
+      })
+      WRITER.write_html
     end
 
     orig, Socket.do_not_reverse_lookup = Socket.do_not_reverse_lookup, true  # turn off reverse DNS resolution temporarily
