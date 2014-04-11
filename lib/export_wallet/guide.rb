@@ -311,6 +311,8 @@ class ExportWallet
         zip.get_output_stream('guide.json') { |f| f.puts @generation.to_json }
       end
 
+      FileUtils.chmod(0755, generated_file_path)
+
       Rails.cache.write("last_modified_#{self.id}",  File.mtime(path))
       Rails.cache.delete("on_error_#{self.id}")
       true
