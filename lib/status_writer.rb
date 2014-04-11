@@ -96,6 +96,7 @@ class StatusWriter
       <html>
         <head>
           <title>Guides Generation Status</title>
+          <meta http-equiv="refresh" content="10">
           <style type="text/css">
             #main {
               width: 1200px;
