@@ -133,8 +133,12 @@ class ExportWallet
           @zip_data.each do |entry|
             root = entry.to_s.split('/').first
 
-            if root == 'maps' && entry.to_s.include?(path) && File.extname(entry.to_s).present?
-              map_files << {path: entry.to_s, data: @zip_data.read(entry)}
+            if root == 'maps' && entry.to_s.include?(path) && File.extname(entry.to_s).present? && entry.to_s.last != '/'
+              begin
+                map_files << {path: entry.to_s, data: @zip_data.read(entry)}
+              rescue
+                raise "missing map files : #{entry}"
+              end
             end
           end
 
