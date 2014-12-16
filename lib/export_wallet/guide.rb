@@ -16,7 +16,8 @@ class ExportWallet
       @path = path
       @zip_data = zip_data
       @nb_files = 1
-      @maps = []
+      @maps_tiled = []
+      @maps_json_content_tiled = []
       @images = []
     end
 
@@ -126,25 +127,26 @@ class ExportWallet
         maps_article.xpath('./content/article').each do |child_html|
           title = child_html.xpath('./h2').first.text
           tile = child_html.xpath('./div').first
+          anchor = child_html.xpath('./h2').first['data-link-anchor']
 
-          path = /(maps\/.[^\/]+)/.match(tile['data-map-url'])[0]
-          map_files = []
+          path_tiled = /(maps\/.[^\/]+)/.match(tile['data-map-url'])[0]
+          map_tiled_files = []
 
           @zip_data.each do |entry|
             root = entry.to_s.split('/').first
 
-            if root == 'maps' && entry.to_s.include?(path) && File.extname(entry.to_s).present? && entry.to_s.last != '/'
+            if root == 'maps' && entry.to_s.include?(path_tiled) && File.extname(entry.to_s).present? && entry.to_s.last != '/'
               begin
-                map_files << {path: entry.to_s, data: @zip_data.read(entry)}
+                map_tiled_files << {path: entry.to_s, data: @zip_data.read(entry)}
               rescue
                 raise "missing map files : #{entry}"
               end
             end
           end
 
-          if !map_files.empty?
-            @maps << {:title => title, :path => path, :files => map_files }
-            maps_json_content << {:title => title, :path => path, url: tile['data-map-url'], width: tile['data-map-width'], height: tile['data-map-height'], tileSize: tile['data-map-tilesize'], minScale: tile['data-map-minscale']}
+          if !map_tiled_files.empty?
+            @maps_json_content_tiled << {title: title, path: path_tiled, url: tile['data-map-url'], width: tile['data-map-width'], height: tile['data-map-height'], tileSize: tile['data-map-tilesize'], minScale: tile['data-map-minscale'], linkAnchor: anchor}
+            @maps_tiled << {title: title, path: path_tiled, files: map_tiled_files}
           end
         end
 
@@ -154,8 +156,19 @@ class ExportWallet
       maps_json_content
     end
 
-    def export
+    def export_title_image
+      ExportWallet.instance.directory.files.create(
+      'key'                   => "guides/icons/#{@id}.jpg",
+      'body'                  => @zip_data.read("#{@id}.jpg"),
+      'content_type'          => 'image/jpeg',
+      )
 
+      true
+    rescue
+      true
+    end
+
+    def export
       current_guide = {}
       thumbnails = []
 
@@ -178,7 +191,7 @@ class ExportWallet
 
       guide = guide.xpath('./html/body')
 
-      maps = export_maps(guide)
+      export_maps(guide)
 
       current_guide[:id] = @id
 
@@ -215,7 +228,6 @@ class ExportWallet
       thumbnails.flatten!
 
       current_guide[:images] = export_images(thumbnails)
-      current_guide[:maps] = maps
 
       current_guide[:content] = guide.xpath('./content').inner_html if guide.xpath('./content').inner_html.present?
 
@@ -244,8 +256,25 @@ class ExportWallet
       chapter_type = child_html.xpath('.').first['id']
       child[:index] = true if chapter_type == 'index'
 
+      # target
       target = child_html.xpath('.').first['data-link-target']
       child[:linkTarget] = target
+      child[:link] = {taget: target, options: {}}
+
+      target = child_html.xpath('.').first['data-link-target']
+      child[:linkTarget] = target
+
+      anchors = child_html.css('[data-link-anchor]').map { |anchor| anchor['data-link-anchor'] }
+      child[:linkAnchors] = anchors if !anchors.empty?
+
+      marker_geo = target = child_html.xpath('.').first['data-link-mark-geo']
+      child[:link][:options] = {markGeo: marker_geo}
+
+      target_options = child_html.xpath('.').first.attributes.select {|k,v| k.include?("data-link-target-option")}
+      target_options.each do |key, value|
+        export_key = key.gsub('data-link-target-option-', '').gsub('-', '_').camelize(:lower)
+        child[:link][:options][export_key.to_sym] = value
+      end
 
       anchors = child_html.css('[data-link-anchor]').map { |anchor| anchor['data-link-anchor'] }
       child[:linkAnchors] = anchors if !anchors.empty?
@@ -286,6 +315,18 @@ class ExportWallet
 
       end
 
+      contextual_links = child_html.xpath('./aside').first
+      if contextual_links
+        links = []
+        contextual_links.xpath('./a').each do |link|
+          options = {type: link['data-link-options-type']}
+          options[:markGeo] = link['data-link-options-mark-geo'] if link['data-link-options-mark-geo']
+          links << {target: link['data-link-target'], options: options}
+        end
+        child[:contextualLinks] = links
+
+        contextual_links.remove
+      end
       # Content
       child[:content] = child_html.inner_html if child_html.inner_html.present?
 
@@ -306,13 +347,13 @@ class ExportWallet
         end
 
         zip.mkdir('maps')
-        @maps.each do |map|
+        maps_to_save.each do |map|
           map[:files].each do |file|
             zip.get_output_stream(file[:path]) { |f| f.puts file[:data] }
           end
         end
 
-        zip.get_output_stream('guide.json') { |f| f.puts @generation.to_json }
+        zip.get_output_stream('guide.json') { |f| f.puts json_to_save }
       end
 
       FileUtils.chmod(0755, generated_file_path)
@@ -324,5 +365,12 @@ class ExportWallet
       cache!
     end
 
+    def maps_to_save
+      @maps_tiled
+    end
+
+    def json_to_save
+      @generation.merge({maps: @maps_json_content_tiled}).to_json
+    end
   end
 end

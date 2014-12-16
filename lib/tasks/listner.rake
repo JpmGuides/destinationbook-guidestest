@@ -5,6 +5,7 @@ namespace :listner do
   desc 'start a listner to update guides'
   task :start => :environment do
     $stdout.sync = true
+    WRITER = StatusWriter.new(Rails.root)
 
     write_status_message = Proc.new do |guide_id, status_name, status_message|
       WRITER.write_json({
