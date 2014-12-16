@@ -145,7 +145,7 @@ class ExportWallet
           end
 
           if !map_tiled_files.empty?
-            @maps_json_content_tiled << {title: title, path: path_tiled, url: tile['data-map-url'], width: tile['data-map-width'], height: tile['data-map-height'], tileSize: tile['data-map-tilesize'], minScale: tile['data-map-minscale'], linkAnchor: anchor}
+            @maps_json_content_tiled << {title: title, path: path_tiled, url: tile['data-map-url'], width: tile['data-map-width'], height: tile['data-map-height'], tileSize: tile['data-map-tilesize'], minScale: tile['data-map-minscale'], linkAnchors: [anchor]}
             @maps_tiled << {title: title, path: path_tiled, files: map_tiled_files}
           end
         end
