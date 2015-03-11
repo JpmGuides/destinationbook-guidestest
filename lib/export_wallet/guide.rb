@@ -259,7 +259,7 @@ class ExportWallet
       # target
       target = child_html.xpath('.').first['data-link-target']
       child[:linkTarget] = target
-      child[:link] = {taget: target, options: {}}
+      child[:link] = {target: target, options: {}}
 
       marker_geo = target = child_html.xpath('.').first['data-link-mark-geo']
       child[:link][:options] = {markGeo: marker_geo}
