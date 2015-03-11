@@ -261,12 +261,6 @@ class ExportWallet
       child[:linkTarget] = target
       child[:link] = {taget: target, options: {}}
 
-      target = child_html.xpath('.').first['data-link-target']
-      child[:linkTarget] = target
-
-      anchors = child_html.css('[data-link-anchor]').map { |anchor| anchor['data-link-anchor'] }
-      child[:linkAnchors] = anchors if !anchors.empty?
-
       marker_geo = target = child_html.xpath('.').first['data-link-mark-geo']
       child[:link][:options] = {markGeo: marker_geo}
 
@@ -275,6 +269,9 @@ class ExportWallet
         export_key = key.gsub('data-link-target-option-', '').gsub('-', '_').camelize(:lower)
         child[:link][:options][export_key.to_sym] = value
       end
+
+      target = child_html.xpath('.').first['data-link-target']
+      child[:linkTarget] = target
 
       anchors = child_html.css('[data-link-anchor]').map { |anchor| anchor['data-link-anchor'] }
       child[:linkAnchors] = anchors if !anchors.empty?
