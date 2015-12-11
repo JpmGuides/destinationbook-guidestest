@@ -145,7 +145,25 @@ class ExportWallet
           end
 
           if !map_tiled_files.empty?
-            @maps_json_content_tiled << {title: title, path: path_tiled, url: tile['data-map-url'], width: tile['data-map-width'], height: tile['data-map-height'], tileSize: tile['data-map-tilesize'], minScale: tile['data-map-minscale'], linkAnchors: [anchor]}
+            initial_location = {x: tile['data-map-initial-location-x'], y: tile['data-map-initial-location-y'], scale: tile['data-map-initial-location-scale']}
+            @maps_json_content_tiled << {
+              title: title,
+              path: path_tiled,
+              url: tile['data-map-url'],
+              width: tile['data-map-width'],
+              height: tile['data-map-height'],
+              tileSize: tile['data-map-tilesize'],
+              minScale: tile['data-map-minscale'],
+              maxScale: tile['data-map-maxscale'],
+              maxX: tile['data-map-maxx'],
+              maxY: tile['data-map-maxy'],
+              minX: tile['data-map-minx'],
+              minY: tile['data-map-miny'],
+              filters: tile['data-map-filters'],
+              locateMe: tile['data-map-locateme'],
+              linkAnchors: [anchor],
+              initialLocation: initial_location
+            }
             @maps_tiled << {title: title, path: path_tiled, files: map_tiled_files}
           end
         end
@@ -255,11 +273,15 @@ class ExportWallet
 
       chapter_type = child_html.xpath('.').first['id']
       child[:index] = true if chapter_type == 'index'
+      child[:poi] = true if chapter_type == 'poi'
 
       # target
       target = child_html.xpath('.').first['data-link-target']
       child[:linkTarget] = target
       child[:link] = {target: target, options: {}}
+
+      anchors = child_html.css('[data-link-anchor]').map { |anchor| anchor['data-link-anchor'] }
+      child[:linkAnchors] = anchors if !anchors.empty?
 
       marker_geo = target = child_html.xpath('.').first['data-link-mark-geo']
       child[:link][:options] = {markGeo: marker_geo}
@@ -269,12 +291,6 @@ class ExportWallet
         export_key = key.gsub('data-link-target-option-', '').gsub('-', '_').camelize(:lower)
         child[:link][:options][export_key.to_sym] = value
       end
-
-      target = child_html.xpath('.').first['data-link-target']
-      child[:linkTarget] = target
-
-      anchors = child_html.css('[data-link-anchor]').map { |anchor| anchor['data-link-anchor'] }
-      child[:linkAnchors] = anchors if !anchors.empty?
 
       # Header & Title
       title_html = child_html.xpath(TITLES_XPATH).first
@@ -298,6 +314,10 @@ class ExportWallet
         image_html.remove
       end
 
+      child[:type] = title_html['data-type']
+      child[:group] = title_html['group']
+      child[:sort] = title_html['data-sort']
+
       title_html.remove
 
       child_html.xpath('./img').each do |image|
@@ -318,7 +338,20 @@ class ExportWallet
         contextual_links.xpath('./a').each do |link|
           options = {type: link['data-link-options-type']}
           options[:markGeo] = link['data-link-options-mark-geo'] if link['data-link-options-mark-geo']
-          links << {target: link['data-link-target'], options: options}
+          options[:icon] = link['data-link-options-icon'] if link['data-link-options-icon']
+
+          texts = []
+          link.xpath('./p').each do |text_node|
+            text = {text: text_node.inner_html}
+            text[:x] = text_node['data-x']
+            text[:y] = text_node['data-y']
+            text[:stroke] = text_node['data-stroke'] if text_node['data-stroke']
+            text[:fill] = text_node['data-fill'] if text_node['data-fill']
+
+            texts << text
+          end
+
+          links << {target: link['data-link-target'], options: options, text: texts}
         end
         child[:contextualLinks] = links
 
