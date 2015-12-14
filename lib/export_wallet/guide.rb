@@ -145,7 +145,6 @@ class ExportWallet
           end
 
           if !map_tiled_files.empty?
-            initial_location = {x: tile['data-map-initial-location-x'], y: tile['data-map-initial-location-y'], scale: tile['data-map-initial-location-scale']}
             @maps_json_content_tiled << {
               title: title,
               path: path_tiled,
@@ -161,8 +160,7 @@ class ExportWallet
               minY: tile['data-map-miny'],
               filters: tile['data-map-filters'],
               locateMe: tile['data-map-locateme'],
-              linkAnchors: [anchor],
-              initialLocation: initial_location
+              linkAnchors: [anchor]
             }
             @maps_tiled << {title: title, path: path_tiled, files: map_tiled_files}
           end
