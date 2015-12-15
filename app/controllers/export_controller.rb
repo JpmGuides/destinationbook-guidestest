@@ -12,6 +12,8 @@ class ExportController < ApplicationController
 
     if File.exists?(zip_path)
       @json = base_json.deep_dup
+      @json[:language] = 'fr' if @guide_id.include?('.01')
+      @json[:language] = 'de' if @guide_id.include?('.02')
       add_files_to_json
 
       render json: @json, type: 'application/json', disposition: 'inline'

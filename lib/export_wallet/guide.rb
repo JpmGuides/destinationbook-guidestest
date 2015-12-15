@@ -126,6 +126,7 @@ class ExportWallet
       if maps_article
         maps_article.xpath('./content/article').each do |child_html|
           title = child_html.xpath('./h2').first.text
+          description = child_html.xpath('./h2').first['title']
           tile = child_html.xpath('./div').first
           anchor = child_html.xpath('./h2').first['data-link-anchor']
 
@@ -147,6 +148,7 @@ class ExportWallet
           if !map_tiled_files.empty?
             @maps_json_content_tiled << {
               title: title,
+              description: description,
               path: path_tiled,
               url: tile['data-map-url'],
               width: tile['data-map-width'],
