@@ -96,8 +96,6 @@ class ExportController < ApplicationController
         "caption_text" => "#000000",
         "caption_background" => "#ffffff",
         "bold_text" => "#000000",
-        "guides-tablet-background-color" => "#ffffff",
-        "guides-tablet-items-background-color" => "#ffffff",
         "guides-tablet-items-title-font-color" => "#ffffff",
         "guides-tablet-items-subtitle-font-color" => "#ffffff",
         "email_links" => "#00519E",
