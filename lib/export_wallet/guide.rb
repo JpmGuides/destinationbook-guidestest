@@ -317,6 +317,7 @@ class ExportWallet
       child[:type] = title_html['data-type']
       child[:group] = title_html['group']
       child[:sort] = title_html['data-sort']
+      child[:listIcon] = title_html['data-list-icon']
 
       title_html.remove
 
