@@ -340,6 +340,10 @@ class ExportWallet
           options = {type: link['data-link-options-type']}
           options[:markGeo] = link['data-link-options-mark-geo'] if link['data-link-options-mark-geo']
           options[:icon] = link['data-link-options-icon'] if link['data-link-options-icon']
+          options[:fill] = link['data-link-options-fill'] if link['data-link-options-fill']
+          options[:stroke] = link['data-link-options-stroke'] if link['data-link-options-stroke']
+          options[:strokeWidth] = link['data-link-options-stroke-width'] if link['data-link-options-stroke-width']
+
 
           texts = []
           link.xpath('./p').each do |text_node|
