@@ -274,7 +274,7 @@ class ExportWallet
       chapter_type = child_html.xpath('.').first['id']
       child[:index] = true if chapter_type == 'index'
       child[:poi] = true if chapter_type == 'poi'
-      child[:copyright] = true if chapter_type == 'copyright'
+      child[:copyright] = true if child_html.xpath('./h1').try(:first).try(:[], 'id') == 'copyright'
 
       # target
       target = child_html.xpath('.').first['data-link-target']
