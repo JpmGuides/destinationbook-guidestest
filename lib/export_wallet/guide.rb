@@ -276,7 +276,7 @@ class ExportWallet
       child[:poi] = true if chapter_type == 'poi'
       child[:copyright] = true if child_html.xpath('./h1').try(:first).try(:[], 'id') == 'copyright'
 
-      child[:zoomLevel] = child_html.xpath('.').first['data-type-zoomlevel'] if chilld[:poi]
+      child[:zoomLevel] = child_html.xpath('.').first['data-type-zoomlevel'] if child[:poi]
 
       # target
       target = child_html.xpath('.').first['data-link-target']
