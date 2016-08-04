@@ -106,40 +106,7 @@ class ExportController < ApplicationController
       },
       maps: [],
       schedule: [],
-      contacts: [
-        {
-          address1: "",
-          address2: "",
-          city: "",
-          company: "Emirates",
-          email: "",
-          emergency_phone: "+44 844 800 2777",
-          phone: "",
-          fax: "",
-          zip: "",
-          comment: "",
-          website: "",
-          category: "Airline",
-          country: "United Kingdom",
-          images: []
-        },
-        {
-          address1: "",
-          address2: "",
-          city: "",
-          company: "Kuredu Island Resort",
-          email: "",
-          emergency_phone: "",
-          phone: "0096 596 236 52",
-          fax: "",
-          zip: "",
-          comment: "",
-          website: "",
-          category: "Hotel",
-          country: "Maldives",
-          images: []
-        }
-      ],
+      contacts: [],
       documents: [],
       guides: []
     }
