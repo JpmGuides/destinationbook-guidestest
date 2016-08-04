@@ -57,8 +57,8 @@ class ExportController < ApplicationController
       name: "Your Trip",
       description: "",
       reference: "123456",
-      start_date: ((Date.today + 1.year).beginning_of_year).strftime('%y-%m-%d'),
-      end_date: ((Date.today + 1.year).beginning_of_year + 6.days).strftime('%y-%m-%d'),
+      start_date: ((Date.today + 1.year).beginning_of_year).strftime('%Y-%m-%d'),
+      end_date: ((Date.today + 1.year).beginning_of_year + 6.days).strftime('%Y-%m-%d'),
       language: "en",
       country: "United States",
       styles: {
