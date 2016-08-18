@@ -343,12 +343,14 @@ class ExportWallet
         links = []
         contextual_links.xpath('./a').each do |link|
           options = {type: link['data-link-options-type']}
-          options[:markGeo] = link['data-link-options-mark-geo'] if link['data-link-options-mark-geo']
-          options[:icon] = link['data-link-options-icon'] if link['data-link-options-icon']
-          options[:fill] = link['data-link-options-fill'] if link['data-link-options-fill']
-          options[:stroke] = link['data-link-options-stroke'] if link['data-link-options-stroke']
-          options[:strokeWidth] = link['data-link-options-stroke-width'] if link['data-link-options-stroke-width']
-
+          options[:markGeo]           = link['data-link-options-mark-geo']            if link['data-link-options-mark-geo']
+          options[:icon]              = link['data-link-options-icon']                if link['data-link-options-icon']
+          options[:fill]              = link['data-link-options-fill']                if link['data-link-options-fill']
+          options[:stroke]            = link['data-link-options-stroke']              if link['data-link-options-stroke']
+          options[:strokeWidth]       = link['data-link-options-stroke-width']        if link['data-link-options-stroke-width']
+          options[:display]           = link['data-link-options-display']             if link['data-link-options-display']
+          options[:alwaysDisplayText] = link['data-link-options-always-display-text'] if link['data-link-options-always-display-text']
+          options[:textDirection]     = link['data-link-options-text-direction']      if link['data-link-options-text-direction']
 
           texts = []
           link.xpath('./p').each do |text_node|
