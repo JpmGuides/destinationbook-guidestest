@@ -224,6 +224,10 @@ class ExportWallet
         current_guide[:description] = description
       end
 
+      if hide_description_poi = guide.xpath('./content/h1').first['data-hide-description-poi']
+        current_guide[:hideDescriptionPoi] = true if hide_description_poi == 'true'
+      end
+
       current_guide[:title] = guide.xpath('./content/h1').first.inner_html
       guide.xpath('./content/h1').remove
 
@@ -307,6 +311,10 @@ class ExportWallet
 
       if description = title_html['title']
         child[:description] = description
+      end
+
+      if hide_description_poi = title_html['data-hide-description-poi']
+        child[:hideDescriptionPoi] = true if hide_description_poi == 'true'
       end
 
       child[:title] = title_html.inner_html
